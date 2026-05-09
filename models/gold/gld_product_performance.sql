@@ -4,7 +4,7 @@ WITH order_items AS (
 
 orders AS (
     SELECT order_id
-    FROM {{ ref('orders') }}
+    FROM {{ ref('brz_orders') }}
     WHERE NOT is_cancelled
 ),
 
@@ -15,8 +15,8 @@ products AS (
         t.category_name_en,
         p.weight_g,
         p.volume_cm3
-    FROM {{ ref('products') }} p
-    LEFT JOIN {{ ref('product_category_translation') }} t
+    FROM {{ ref('brz_products') }} p
+    LEFT JOIN {{ ref('brz_product_category_name_translation') }} t
         ON t.category_name_pt = p.category_name_pt
 ),
 
@@ -24,7 +24,7 @@ reviews AS (
     SELECT DISTINCT ON (order_id)
         order_id,
         review_score
-    FROM {{ ref('order_reviews') }}
+    FROM {{ ref('brz_order_reviews') }}
     ORDER BY order_id, review_created_at DESC
 ),
 

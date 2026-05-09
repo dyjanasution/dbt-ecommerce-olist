@@ -12,13 +12,13 @@ reviews AS (
         order_id,
         review_score,
         is_low_score
-    FROM {{ ref('order_reviews') }}
+    FROM {{ ref('brz_order_reviews') }}
     ORDER BY order_id, review_created_at DESC
 ),
 
 products AS (
     SELECT product_id, category_name_pt
-    FROM {{ ref('products') }}
+    FROM {{ ref('brz_products') }}
 ),
 
 item_grain AS (

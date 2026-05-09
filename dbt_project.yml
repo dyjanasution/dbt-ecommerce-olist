@@ -19,11 +19,8 @@ clean-targets:
 models:
   ecommerce_olist:
     bronze:
-      +materialized: view
-      +schema: bronze
+      +materialized: ephemeral
     silver:
-      +materialized: view
-      +schema: silver
+      +materialized: ephemeral
     gold:
-      +materialized: table
-      +schema: gold
+      +materialized: ephemeral

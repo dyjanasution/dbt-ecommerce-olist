@@ -14,7 +14,7 @@ order_items_agg AS (
         SUM(freight_value)              AS total_freight,
         SUM(item_total_cost)            AS total_order_value,
         AVG(item_price)                 AS avg_item_price
-    FROM {{ ref('order_items') }}
+    FROM {{ ref('brz_order_items') }}
     GROUP BY order_id
 ),
 
@@ -26,7 +26,7 @@ payments_agg AS (
         SUM(payment_value) FILTER (WHERE is_credit_card)        AS credit_card_amount,
         SUM(payment_value) FILTER (WHERE is_boleto)             AS boleto_amount,
         COUNT(DISTINCT payment_type)                            AS payment_methods_used
-    FROM {{ ref('order_payments') }}
+    FROM {{ ref('brz_order_payments') }}
     GROUP BY order_id
 ),
 
@@ -38,7 +38,7 @@ reviews AS (
         review_title,
         review_message,
         review_created_at
-    FROM {{ ref('order_reviews') }}
+    FROM {{ ref('brz_order_reviews') }}
     ORDER BY order_id, review_created_at DESC
 ),
 
