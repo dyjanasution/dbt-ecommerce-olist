@@ -1,0 +1,114 @@
+version: 2
+
+sources:
+  - name: olist
+    database: postgres
+    schema: public
+    tables:
+      - name: orders
+      - name: order_items
+      - name: order_payments
+      - name: order_reviews
+      - name: customers
+      - name: products
+      - name: product_category_name_translation
+      - name: sellers
+      - name: geolocation
+
+models:
+  # ── BRONZE ──────────────────────────────
+  - name: brz_orders
+    description: "Cleaned and typed orders with delivery flags"
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: order_status
+        tests: [not_null]
+
+  - name: brz_order_items
+    description: "Cleaned order line items with derived total cost"
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: item_price
+        tests: [not_null]
+
+  - name: brz_order_payments
+    description: "Cleaned payment lines with payment type flags"
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: payment_value
+        tests: [not_null]
+
+  - name: brz_order_reviews
+    description: "Cleaned reviews with low-score flag"
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: review_score
+        tests: [not_null]
+
+  - name: brz_customers
+    description: "Cleaned customer dimension"
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+      - name: customer_unique_id
+        tests: [not_null]
+
+  - name: brz_products
+    description: "Cleaned products with cast dimensions"
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+
+  - name: brz_product_category_translation
+    description: "Portuguese to English category mapping"
+    columns:
+      - name: category_name_pt
+        tests: [not_null]
+
+  - name: brz_sellers
+    description: "Cleaned seller dimension"
+    columns:
+      - name: seller_id
+        tests: [unique, not_null]
+
+  - name: brz_geolocation
+    description: "Cleaned geolocation with lat/lng"
+    columns:
+      - name: zip_code_prefix
+        tests: [not_null]
+
+  # ── SILVER ──────────────────────────────
+  - name: slv_orders_enriched
+    description: "Enriched order grain with delivery delay and customer info"
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+
+  - name: slv_seller_metrics
+    description: "Per-seller aggregated metrics"
+    columns:
+      - name: seller_id
+        tests: [unique, not_null]
+
+  # ── GOLD ────────────────────────────────
+  - name: gld_monthly_revenue
+    description: "Monthly revenue with MoM growth"
+    columns:
+      - name: month
+        tests: [unique, not_null]
+
+  - name: gld_customer_segments
+    description: "Customer segmentation new/returning/at_risk/churned"
+    columns:
+      - name: customer_unique_id
+        tests: [unique, not_null]
+
+  - name: gld_product_performance
+    description: "Product and category performance rankings"
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
